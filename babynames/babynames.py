@@ -41,7 +41,15 @@ def extract_names(filename):
   ['2006', 'Aaliyah 91', Aaron 57', 'Abagail 895', ' ...]
   """
   # +++your code here+++
-  return
+  archivo=open(filename, 'r').read()
+  year=re.findall(r'(?:in\s)(\d\d\d\d)',archivo)
+  names_n_ranks=re.findall(r'(?:<tr align="right"><td>)(\d+)(?:</td><td>)(\w+)(?:</td><td>)(\w+)',archivo,re.IGNORECASE)
+  data_dict={'year':year,'names':[]}
+  for tuples in names_n_ranks:
+    data_dict['names'].append(tuples[1]+' '+tuples[0])
+    data_dict['names'].append(tuples[-1]+' '+tuples[0])
+  data_dict={'year':year,'names':sorted(data_dict['names'])}
+  return data_dict
 
 
 def main():
@@ -49,7 +57,6 @@ def main():
   # Make a list of command line arguments, omitting the [0] element
   # which is the script itself.
   args = sys.argv[1:]
-
   if not args:
     print('usage: [--summaryfile] file [file ...]')
     sys.exit(1)
@@ -59,10 +66,14 @@ def main():
   if args[0] == '--summaryfile':
     summary = True
     del args[0]
-
   # +++your code here+++
   # For each filename, get the names, then either print the text output
   # or write it to a summary file
-
+  if summary==True:
+    while len(args)!=0:
+      datos=extract_names(args[0])
+      print(f'Año{datos["year"]} \n')
+      for nombres in datos['names']: print(f'{nombres} \n')
+      del args[0]
 if __name__ == '__main__':
   main()
